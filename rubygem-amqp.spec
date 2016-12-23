@@ -1,23 +1,26 @@
 # Generated from amqp-1.5.0.gem by gem2rpm -*- rpm-spec -*-
 %global gem_name amqp
 
-Name: rubygem-%{gem_name}
-Version: 1.5.0
-Release: 2%{?dist}
-Summary: Widely used, feature-rich asynchronous RabbitMQ client with batteries included
-Group: Development/Languages
-License: Ruby
-URL: http://rubyamqp.info
-Source0: https://rubygems.org/gems/%{gem_name}-%{version}.gem
-BuildRequires: ruby(release)
-BuildRequires: rubygems-devel 
-BuildRequires: ruby 
-# BuildRequires: rubygem(rspec) 
-# BuildRequires: rubygem(bundler) 
-Requires: rubygem(eventmachine)
-Requires: rubygem(amq-protocol)
+Name:           rubygem-%{gem_name}
+Version:        1.6.0
+Release:        1%{?dist}
+Summary:        Widely used, feature-rich asynchronous RabbitMQ client with batteries included
+Group:          Development/Languages
+License:        Ruby
+URL:            http://rubyamqp.info
+Source0:        https://rubygems.org/gems/%{gem_name}-%{version}.gem
+BuildRequires:  ruby(release)
+BuildRequires:  rubygems-devel
+BuildRequires:  ruby
+# BuildRequires: rubygem(rspec)
+BuildRequires:  rubygem(eventmachine)
+BuildRequires:  rubygem(amq-protocol) >= 2.0.1
+
+Requires:       rubygem(eventmachine)
+Requires:       rubygem(amq-protocol) >= 2.0.1
+
 BuildArch: noarch
-%if 0%{?fedora} <= 20 || 0%{?el7}
+%if 0%{?rhel}
 Provides: rubygem(%{gem_name}) = %{version}
 %endif
 
@@ -27,19 +30,17 @@ included.
 
 
 %package doc
-Summary: Documentation for %{name}
-Group: Documentation
-Requires: %{name} = %{version}-%{release}
-BuildArch: noarch
+Summary:        Documentation for %{name}
+Group:          Documentation
+Requires:       %{name} = %{version}-%{release}
+BuildArch:      noarch
 
 %description doc
 Documentation for %{name}.
 
 %prep
 gem unpack %{SOURCE0}
-
 %setup -q -D -T -n  %{gem_name}-%{version}
-
 gem spec %{SOURCE0} -l --ruby > %{gem_name}.gemspec
 
 %build
@@ -103,6 +104,9 @@ popd
 %{gem_instdir}/repl
 
 %changelog
+* Fri Dec 23 2016 Martin Mágr <mmagr@redhat.com> - 1.6.0-1
+- Updated to latest upstream version
+
 * Thu Jun 18 2015 Graeme Gillies <ggillies@redhat.com> - 1.5.0-2
 - Updated specfile to include missing runtime dependencies
 
