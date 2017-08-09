@@ -1,6 +1,15 @@
 # Generated from amqp-1.5.0.gem by gem2rpm -*- rpm-spec -*-
 %global gem_name amqp
 
+# explicitly override gem macros to avoid problems with different
+# version and upstream_version
+%if 0%{?dlrn} > 0
+%global gem_instdir %{gem_dir}/gems/%{gem_name}-%{upstream_version}
+%global gem_cache   %{gem_dir}/cache/%{gem_name}-%{upstream_version}.gem
+%global gem_spec    %{gem_dir}/specifications/%{gem_name}-%{upstream_version}.gemspec
+%global gem_docdir  %{gem_dir}/doc/%{gem_name}-%{upstream_version} 
+%endif
+
 Name:           rubygem-%{gem_name}
 Version:        1.6.0
 Release:        1%{?dist}
@@ -40,7 +49,11 @@ Documentation for %{name}.
 
 %prep
 gem unpack %{SOURCE0}
+%if 0%{?dlrn} > 0
+%setup -q -D -T -n  %{dlrn_nvr}
+%else
 %setup -q -D -T -n  %{gem_name}-%{version}
+%endif
 gem spec %{SOURCE0} -l --ruby > %{gem_name}.gemspec
 
 %build
@@ -49,7 +62,11 @@ gem build %{gem_name}.gemspec
 
 # %%gem_install compiles any C extensions and installs the gem into ./%%gem_dir
 # by default, so that we can move it into the buildroot in %%install
+%if 0%{?dlrn} > 0
+%gem_install -n %{gem_name}-%{upstream_version}.gem
+%else
 %gem_install
+%endif
 
 %install
 mkdir -p %{buildroot}%{gem_dir}
@@ -61,7 +78,11 @@ rm -f %{buildroot}%{gem_instdir}/{.gitignore,.rspec,.ruby-version,.travis.yml,.y
 
 # Run the test suite
 %check
+#%if 0%{?dlrn} > 0
+#pushd .%{gem_dir}/gems/%{gem_name}-%{upstream_version}
+#%else
 pushd .%{gem_instdir}
+#%endif
 # Disabled because the tests pull in a lot of dependencies, including rabbitmq
 # rspec -Ilib spec
 popd
